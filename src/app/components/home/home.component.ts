@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { NobetService } from '../../services/nobet.service';
 interface DoktorType {
   name: string;
   checked: boolean;
@@ -17,6 +18,9 @@ interface DoktorType {
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+
+
+
   checked: boolean = false;
   doctorTypes : DoktorType[] =[
     {name:'Şef', checked: false, numberForOneDay:1},
@@ -27,4 +31,11 @@ export class HomeComponent {
     {name:'Intern', checked: false, numberForOneDay:1},
     {name:'Diğer', checked: false, numberForOneDay:1},
   ]
+
+
+  constructor(private shiftService: NobetService) {}
+
+  createShift() {
+    this.shiftService.createShifts();
+  }
 }

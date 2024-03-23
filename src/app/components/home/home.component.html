@@ -7,24 +7,28 @@
     </p>
     <p>Doktor sayısı:</p>
     <div class="flex flex-row gap-2 p-2">
-        <div>
-
-            @for (doktor of doctorTypes; track doktor)  {
+        <ul>
+        @for (doktor of doctorTypes; track doktor)  {
                 @if(doktor.checked) {
+                    <li>
                     Mevcut doktor sayısı: 
                     {{doktor.name}} 
                     <p-inputNumber [(ngModel)]="doktor.numberForOneDay" [showButtons]="true" buttonLayout="horizontal" 
-                    inputId="horizontal" spinnerMode="horizontal" [step]="1"
+                    inputId="horizontal" spinnerMode="horizontal" [step]="1" class="m-2 w-25"
             decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" 
             incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+        </li><li>
             Bir günde nöbetçi olması gereken doktor sayısı:
-            <p-inputNumber [(ngModel)]="doktor.numberForOneDay" [showButtons]="true" buttonLayout="horizontal" 
+            <p-inputNumber [(ngModel)]="doktor.numberForOneDay" [showButtons]="true" buttonLayout="horizontal" class="m-2 w-25"
             inputId="horizontal" spinnerMode="horizontal" [step]="1"
         decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" 
         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+    </li>
                 }
             }
-        </div>        
+        
+    </ul>
+          
     </div>
     
     <p>Nöbet çizelgesi tarihi: </p>
@@ -34,4 +38,4 @@
 </div>
 
 
-<p-button label="Submit" severity="success"></p-button>
+<p-button label="Submit" severity="success" (click)="createShift()"></p-button>

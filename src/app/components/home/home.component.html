@@ -1,0 +1,37 @@
+<div class="container mb-5">
+    <p>Nöbetçi tipleri: 
+    @for (doktor of doctorTypes; track doktor) {
+        <p-toggleButton [(ngModel)]="doktor.checked" [onLabel]="doktor.name" [offLabel]="doktor.name" onIcon="pi pi-check" offIcon="pi pi-times"
+          class="m-2"></p-toggleButton>
+    }
+    </p>
+    <p>Doktor sayısı:</p>
+    <div class="flex flex-row gap-2 p-2">
+        <div>
+
+            @for (doktor of doctorTypes; track doktor)  {
+                @if(doktor.checked) {
+                    Mevcut doktor sayısı: 
+                    {{doktor.name}} 
+                    <p-inputNumber [(ngModel)]="doktor.numberForOneDay" [showButtons]="true" buttonLayout="horizontal" 
+                    inputId="horizontal" spinnerMode="horizontal" [step]="1"
+            decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" 
+            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+            Bir günde nöbetçi olması gereken doktor sayısı:
+            <p-inputNumber [(ngModel)]="doktor.numberForOneDay" [showButtons]="true" buttonLayout="horizontal" 
+            inputId="horizontal" spinnerMode="horizontal" [step]="1"
+        decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" 
+        incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
+                }
+            }
+        </div>        
+    </div>
+    
+    <p>Nöbet çizelgesi tarihi: </p>
+    <p>Müsait olunmayan günler: </p>
+    <p>Özellikle istenen günler: </p>
+    
+</div>
+
+
+<p-button label="Submit" severity="success"></p-button>

@@ -30,8 +30,8 @@ export class NobetService {
 
   constructor() {
     this.persons = [
-      {personId:1,shiftDays:[],notPossible:[2,3,4,5],desiredDays:[],holidayShiftDays:[]},
-      {personId:2,shiftDays:[],notPossible:[],desiredDays:[],holidayShiftDays:[]},
+      {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[]},
+      {personId:2,shiftDays:[],notPossible:[4,9],desiredDays:[],holidayShiftDays:[]},
       {personId:3,shiftDays:[],notPossible:[2,7,8,9,10],desiredDays:[],holidayShiftDays:[]},
       {personId:4,shiftDays:[],notPossible:[2,3,4],desiredDays:[],holidayShiftDays:[]}
     ];
@@ -59,19 +59,65 @@ export class NobetService {
         const index = days[busyDay-1].possiblePersonIds.indexOf(person.personId);
         if(index>-1) {
           days[busyDay-1].possiblePersonIds.splice(index,1);
+          console.log(busyDay,person)
         }
       }
     }
    }
 
+   assignLowPossibilityDays(days: Day[], persons:Person[], shiftPerPerson: number, holidayShiftPerPerson: number,possibleNumber: number=1) {
+    for(const day of days) {
+      if(day.possiblePersonIds.length==0) {
+        console.log('No one is possible for day: ', day.dayNo);
+        return;
+      }
+      else if (day.possiblePersonIds.length==possibleNumber) {
+        day.workingPersonId = this.sample(day.possiblePersonIds);
+        const selectedPerson = this.persons.find(x=>x.personId==day.workingPersonId);
+        if(selectedPerson) {
+          this.assignPersonToDay(selectedPerson,days,day,shiftPerPerson,holidayShiftPerPerson);
+        }
+      }
+    }
+   }
+
+
+   assignPersonToDay(person: Person, days: Day[], day: Day, shiftPerPerson: number, holidayShiftPerPerson: number) {
+    if(person) {
+      const dayId = day.dayNo-1;
+      if(day.isHoliday) {
+        person.holidayShiftDays.push(dayId+1);
+        if(person.holidayShiftDays.length>=holidayShiftPerPerson) {
+          this.finishedPersonsForHolidays.push(person.personId);
+        }
+      }
+      else {
+        person.shiftDays.push(dayId+1);
+        if(person.shiftDays.length>=shiftPerPerson) {
+          this.finishedPersons.push(person.personId);
+        }
+      }
+      if(dayId!=0) {
+        days[dayId-1].possiblePersonIds.splice( days[dayId-1].possiblePersonIds.indexOf(person.personId),1);
+      }
+      if(dayId!=days.length-1) {
+        days[dayId+1].possiblePersonIds.splice( days[dayId+1].possiblePersonIds.indexOf(person.personId),1);
+      }
+    }
+
+   }
    
 
 
    createShifts(days: Day[]=this.days,persons: Person[]=this.persons, holidays: number[]=this.holidays){
-    this.markNotPossibleDays(persons,days);
     const shiftPerPerson = Number((days.length-holidays.length)/persons.length)
     const holidayShiftPerPerson = Number(holidays.length/persons.length)
-    console.log(shiftPerPerson)
+
+    this.markNotPossibleDays(persons,days);
+    this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
+    this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,2);
+
+    console.log(days)
     for (let i=0; i<days.length; i++){
       if (days[i].workingPersonId==0) {
         if(days[i].isHoliday) {

@@ -39,3 +39,16 @@
 
 
 <p-button label="Submit" severity="success" (click)="createShift()"></p-button>
+
+<div class="container">
+    @for (day of days; track day) {
+        <p>
+            Day: 
+        {{day.dayNo}}
+         Person: {{day.workingPersonId}}
+
+         Holidat: {{day.isHoliday}}
+        </p>
+       
+    }
+</div>

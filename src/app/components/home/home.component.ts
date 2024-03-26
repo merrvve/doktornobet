@@ -9,6 +9,13 @@ interface DoktorType {
   checked: boolean;
   numberForOneDay: number;
 }
+interface Day {
+  dayNo: number;
+  isHoliday: boolean;
+  workingPersonId: number;
+  possiblePersonIds: number[];
+}
+
 
 @Component({
   selector: 'app-home',
@@ -20,7 +27,7 @@ interface DoktorType {
 export class HomeComponent {
 
 
-
+  days : Day[] =[];
   checked: boolean = false;
   doctorTypes : DoktorType[] =[
     {name:'Şef', checked: false, numberForOneDay:1},
@@ -36,6 +43,6 @@ export class HomeComponent {
   constructor(private shiftService: NobetService) {}
 
   createShift() {
-    this.shiftService.createShifts();
+    this.days= this.shiftService.createShifts();
   }
 }

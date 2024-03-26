@@ -31,9 +31,11 @@ export class NobetService {
   constructor() {
     this.persons = [
       {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[]},
-      {personId:2,shiftDays:[],notPossible:[4,9],desiredDays:[],holidayShiftDays:[]},
+      {personId:2,shiftDays:[],notPossible:[4,1],desiredDays:[],holidayShiftDays:[]},
       {personId:3,shiftDays:[],notPossible:[2,7,8,10],desiredDays:[],holidayShiftDays:[]},
-      {personId:4,shiftDays:[],notPossible:[2,3,4],desiredDays:[],holidayShiftDays:[]}
+      {personId:4,shiftDays:[],notPossible:[2,3,4,20],desiredDays:[],holidayShiftDays:[]},
+      {personId:5,shiftDays:[],notPossible:[7],desiredDays:[],holidayShiftDays:[]},
+      {personId:6,shiftDays:[],notPossible:[10],desiredDays:[],holidayShiftDays:[]}
     ];
     const holidays= [6,7,13,14,20,21,27,28]
     this.holidays=holidays;
@@ -47,7 +49,7 @@ export class NobetService {
         dayNo: i,
         isHoliday: isHoliday,
         workingPersonId: 0,
-        possiblePersonIds: [1,2,3,4]
+        possiblePersonIds: [1,2,3,4,5,6]
       })
     }
     
@@ -67,11 +69,11 @@ export class NobetService {
 
    assignLowPossibilityDays(days: Day[], persons:Person[], shiftPerPerson: number, holidayShiftPerPerson: number,possibleNumber: number=1) {
     for(const day of days) {
-      if(day.possiblePersonIds.length==0) {
+      if(day.possiblePersonIds.length==0 && day.workingPersonId==0) {
         console.log('No one is possible for day: ', day.dayNo);
         return;
       }
-      else if (day.possiblePersonIds.length==possibleNumber) {
+      else if (day.possiblePersonIds.length==possibleNumber && day.workingPersonId==0) {
         day.workingPersonId = this.sample(day.possiblePersonIds);
         const selectedPerson = this.persons.find(x=>x.personId==day.workingPersonId);
         if(selectedPerson) {
@@ -110,8 +112,8 @@ export class NobetService {
 
 
    createShifts(days: Day[]=this.days,persons: Person[]=this.persons, holidays: number[]=this.holidays){
-    const shiftPerPerson = Number((days.length-holidays.length)/persons.length)
-    const holidayShiftPerPerson = Number(holidays.length/persons.length)
+    const shiftPerPerson = Math.ceil((days.length-holidays.length)/persons.length)
+    const holidayShiftPerPerson = Math.ceil(holidays.length/persons.length)
 
     this.markNotPossibleDays(persons,days);
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
@@ -151,19 +153,24 @@ export class NobetService {
         }
         else {
           console.log('No possible person for day: ',i+1);
-          return;
+          return [];
         }
         
   
       }
     }
+
+    
     console.log(days);
     console.log(days.filter(x=>x.workingPersonId==1))
     console.log(days.filter(x=>x.workingPersonId==2))
     console.log(days.filter(x=>x.workingPersonId==3))
     console.log(days.filter(x=>x.workingPersonId==4))
+    console.log(days.filter(x=>x.workingPersonId==5))
+    console.log(days.filter(x=>x.workingPersonId==6))
   
     console.log(persons)
+    return days;
    }
 
    sample(array: number[]){

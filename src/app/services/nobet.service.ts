@@ -32,7 +32,7 @@ export class NobetService {
     this.persons = [
       {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[]},
       {personId:2,shiftDays:[],notPossible:[4,9],desiredDays:[],holidayShiftDays:[]},
-      {personId:3,shiftDays:[],notPossible:[2,7,8,9,10],desiredDays:[],holidayShiftDays:[]},
+      {personId:3,shiftDays:[],notPossible:[2,7,8,10],desiredDays:[],holidayShiftDays:[]},
       {personId:4,shiftDays:[],notPossible:[2,3,4],desiredDays:[],holidayShiftDays:[]}
     ];
     const holidays= [6,7,13,14,20,21,27,28]
@@ -116,8 +116,8 @@ export class NobetService {
     this.markNotPossibleDays(persons,days);
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,2);
+    this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
 
-    console.log(days)
     for (let i=0; i<days.length; i++){
       if (days[i].workingPersonId==0) {
         if(days[i].isHoliday) {
@@ -132,13 +132,13 @@ export class NobetService {
           const selectedPerson = this.persons.find(x=>x.personId==selectedId)
           if(selectedPerson) {
             if(days[i].isHoliday) {
-              selectedPerson.holidayShiftDays.push(i);
+              selectedPerson.holidayShiftDays.push(i+1);
               if(selectedPerson.holidayShiftDays.length>=holidayShiftPerPerson) {
                 this.finishedPersonsForHolidays.push(selectedId);
               }
             }
             else {
-              selectedPerson.shiftDays.push(i);
+              selectedPerson.shiftDays.push(i+1);
               if(selectedPerson.shiftDays.length>=shiftPerPerson) {
                 this.finishedPersons.push(selectedId);
               }

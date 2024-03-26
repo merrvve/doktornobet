@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 interface Day {
   dayNo: number;
   isHoliday: boolean;
-  workingPersonId: number;
+  workingPersonIds: number[];
   possiblePersonIds: number[];
 }
 
@@ -31,7 +31,7 @@ export class NobetService {
   constructor() {
     this.persons = [
       {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[]},
-      {personId:2,shiftDays:[],notPossible:[4,1],desiredDays:[],holidayShiftDays:[]},
+      {personId:2,shiftDays:[],notPossible:[1],desiredDays:[],holidayShiftDays:[]},
       {personId:3,shiftDays:[],notPossible:[2,7,8,10],desiredDays:[],holidayShiftDays:[]},
       {personId:4,shiftDays:[],notPossible:[2,3,4,20],desiredDays:[],holidayShiftDays:[]},
       {personId:5,shiftDays:[],notPossible:[7],desiredDays:[],holidayShiftDays:[]},
@@ -48,7 +48,7 @@ export class NobetService {
       this.days.push({
         dayNo: i,
         isHoliday: isHoliday,
-        workingPersonId: 0,
+        workingPersonIds: [],
         possiblePersonIds: [1,2,3,4,5,6]
       })
     }
@@ -69,13 +69,14 @@ export class NobetService {
 
    assignLowPossibilityDays(days: Day[], persons:Person[], shiftPerPerson: number, holidayShiftPerPerson: number,possibleNumber: number=1) {
     for(const day of days) {
-      if(day.possiblePersonIds.length==0 && day.workingPersonId==0) {
+      if(day.possiblePersonIds.length==0 && (day.workingPersonIds.length==0 || day.workingPersonIds.length==1)) {
         console.log('No one is possible for day: ', day.dayNo);
         return;
       }
-      else if (day.possiblePersonIds.length==possibleNumber && day.workingPersonId==0) {
-        day.workingPersonId = this.sample(day.possiblePersonIds);
-        const selectedPerson = this.persons.find(x=>x.personId==day.workingPersonId);
+      else if (day.possiblePersonIds.length==possibleNumber && (day.workingPersonIds.length==0 || day.workingPersonIds.length==1)) {
+        let selectedPersonId = this.sample(day.possiblePersonIds);
+        day.workingPersonIds.push(selectedPersonId) 
+        const selectedPerson = this.persons.find(x=>x.personId==selectedPersonId);
         if(selectedPerson) {
           this.assignPersonToDay(selectedPerson,days,day,shiftPerPerson,holidayShiftPerPerson);
         }
@@ -112,8 +113,8 @@ export class NobetService {
 
 
    createShifts(days: Day[]=this.days,persons: Person[]=this.persons, holidays: number[]=this.holidays){
-    const shiftPerPerson = Math.ceil((days.length-holidays.length)/persons.length)
-    const holidayShiftPerPerson = Math.ceil(holidays.length/persons.length)
+    const shiftPerPerson = Math.ceil((days.length-holidays.length)/persons.length) *2
+    const holidayShiftPerPerson = Math.ceil(holidays.length/persons.length) *2
 
     this.markNotPossibleDays(persons,days);
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
@@ -121,7 +122,7 @@ export class NobetService {
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
 
     for (let i=0; i<days.length; i++){
-      if (days[i].workingPersonId==0) {
+      if (days[i].workingPersonIds.length==0 ||days[i].workingPersonIds.length==1) {
         if(days[i].isHoliday) {
           days[i]=this.deleteFinished(days[i],this.finishedPersonsForHolidays);
         }
@@ -130,7 +131,7 @@ export class NobetService {
         }
         const selectedId= this.sample(days[i].possiblePersonIds);
         if(selectedId>-1) {
-          days[i].workingPersonId = selectedId;
+          days[i].workingPersonIds.push(selectedId);
           const selectedPerson = this.persons.find(x=>x.personId==selectedId)
           if(selectedPerson) {
             if(days[i].isHoliday) {
@@ -145,7 +146,7 @@ export class NobetService {
                 this.finishedPersons.push(selectedId);
               }
             }
-            
+            days[i].possiblePersonIds.splice(days[i].possiblePersonIds.indexOf(selectedId),1)
           }
           if(i+1<days.length) {
             days[i+1].possiblePersonIds.splice(days[i+1].possiblePersonIds.indexOf(selectedId),1)
@@ -160,15 +161,48 @@ export class NobetService {
       }
     }
 
-    
-    console.log(days);
-    console.log(days.filter(x=>x.workingPersonId==1))
-    console.log(days.filter(x=>x.workingPersonId==2))
-    console.log(days.filter(x=>x.workingPersonId==3))
-    console.log(days.filter(x=>x.workingPersonId==4))
-    console.log(days.filter(x=>x.workingPersonId==5))
-    console.log(days.filter(x=>x.workingPersonId==6))
+    for (let i=0; i<days.length; i++){
+      if (days[i].workingPersonIds.length==0 ||days[i].workingPersonIds.length==1) {
+        if(days[i].isHoliday) {
+          days[i]=this.deleteFinished(days[i],this.finishedPersonsForHolidays);
+        }
+        else {
+          days[i]=this.deleteFinished(days[i],this.finishedPersons);      
+        }
+        const selectedId= this.sample(days[i].possiblePersonIds);
+        if(selectedId>-1) {
+          days[i].workingPersonIds.push(selectedId);
+          const selectedPerson = this.persons.find(x=>x.personId==selectedId)
+          if(selectedPerson) {
+            if(days[i].isHoliday) {
+              selectedPerson.holidayShiftDays.push(i+1);
+              if(selectedPerson.holidayShiftDays.length>=holidayShiftPerPerson) {
+                this.finishedPersonsForHolidays.push(selectedId);
+              }
+            }
+            else {
+              selectedPerson.shiftDays.push(i+1);
+              if(selectedPerson.shiftDays.length>=shiftPerPerson) {
+                this.finishedPersons.push(selectedId);
+              }
+            }
+            days[i].possiblePersonIds.splice(days[i].possiblePersonIds.indexOf(selectedId),1)
+          }
+          if(i+1<days.length) {
+            days[i+1].possiblePersonIds.splice(days[i+1].possiblePersonIds.indexOf(selectedId),1)
+          }
+        }
+        else {
+          console.log('No possible person for day: ',i+1);
+          return [];
+        }
+        
   
+      }
+    }
+  
+    console.log(days);
+    
     console.log(persons)
     return days;
    }

@@ -12,7 +12,7 @@ interface DoktorType {
 interface Day {
   dayNo: number;
   isHoliday: boolean;
-  workingPersonId: number;
+  workingPersonIds: number[];
   possiblePersonIds: number[];
 }
 

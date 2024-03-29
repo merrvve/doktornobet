@@ -1,40 +1,88 @@
-<div class="container mb-5">
-    <p>Nöbetçi tipleri: 
-    @for (doktor of doctorTypes; track doktor) {
-        <p-toggleButton [(ngModel)]="doktor.checked" [onLabel]="doktor.name" [offLabel]="doktor.name" onIcon="pi pi-check" offIcon="pi pi-times"
-          class="m-2"></p-toggleButton>
-    }
-    </p>
-    <p>Doktor sayısı:</p>
-    <div class="flex flex-row gap-2 p-2">
-        <ul>
-        @for (doktor of doctorTypes; track doktor)  {
-                @if(doktor.checked) {
-                    <li>
-                    Mevcut doktor sayısı: 
-                    {{doktor.name}} 
-                    <p-inputNumber [(ngModel)]="doktor.numberForOneDay" [showButtons]="true" buttonLayout="horizontal" 
-                    inputId="horizontal" spinnerMode="horizontal" [step]="1" class="m-2 w-25"
-            decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" 
-            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
-        </li><li>
-            Bir günde nöbetçi olması gereken doktor sayısı:
-            <p-inputNumber [(ngModel)]="doktor.numberForOneDay" [showButtons]="true" buttonLayout="horizontal" class="m-2 w-25"
-            inputId="horizontal" spinnerMode="horizontal" [step]="1"
-        decrementButtonClass="p-button-danger" incrementButtonClass="p-button-success" 
-        incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"></p-inputNumber>
-    </li>
-                }
-            }
-        
-    </ul>
-          
-    </div>
-    
-    <p>Nöbet çizelgesi tarihi: </p>
-    <p>Müsait olunmayan günler: </p>
-    <p>Özellikle istenen günler: </p>
-    
+<div class="card flex-1 justify-content-center">
+    <p-stepper>
+        <p-stepperPanel header="Nöbetçi Sayıları">
+            <ng-template pTemplate="content" let-nextCallback="nextCallback" let-index="index">
+                <div class="flex flex-column">
+                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex font-small">
+                        <div class="flex-initial">
+                            <div class="flex flex-column">
+                                @for (doktor of doctorTypes; track doktor) {
+                                    <p-toggleButton [(ngModel)]="doktor.checked" [onLabel]="doktor.name" [offLabel]="doktor.name" onIcon="pi pi-check" offIcon="pi pi-times"
+                                      class="m-2"></p-toggleButton>
+                                }
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="flex-initial">
+                            <table class="m-5">
+                                <thead class="w-100">
+                                    <tr>
+                                        <th></th>
+                                        <th>Toplam Sayı</th>
+                                        <th>Bir günde nöbetçi olması gereken kişi sayısı</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (doktor of doctorTypes; track doktor)  {
+                                        @if(doktor.checked) {
+                                            <tr>
+                                                <td>{{doktor.name}}</td>
+                                                <td>
+                                                    <p-inputNumber class="m-1" [(ngModel)]="doktor.numberForOneDay" inputId="integeronly" [showButtons]="true"></p-inputNumber>
+                                                
+                                                </td>
+                                                <td><p-inputNumber class="m-1"  [(ngModel)]="doktor.total" inputId="integeronly" [showButtons]="true"></p-inputNumber></td>
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="flex justify-content-end mt-3">
+                    <p-button label="İleri" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" />
+                </div>
+        </ng-template>
+        </p-stepperPanel>
+        <p-stepperPanel header="Nöbet Dönemi">
+            <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
+                <div class="flex flex-column">
+                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+                        <div class="card flex justify-content-center">
+                            <p-calendar class="max-w-full" [(ngModel)]="date" [inline]="true" [showWeek]="true"></p-calendar>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="flex pt-4 justify-content-between">
+                    <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" />
+                    <p-button label="Next" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" /></div
+            ></ng-template>
+        </p-stepperPanel>
+        <p-stepperPanel header="Sınırlama ve İsimlendirme">
+            <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
+                <div class="flex flex-column h-12rem">
+                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">Content III</div>
+                </div>
+                <div class="flex pt-4 justify-content-start">
+                    <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" /></div
+            ></ng-template>
+        </p-stepperPanel>
+        <p-stepperPanel header="Sonuç">
+            <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
+                <div class="flex flex-column h-12rem">
+                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">Content III</div>
+                </div>
+                <div class="flex pt-4 justify-content-start">
+                    <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" /></div
+            ></ng-template>
+        </p-stepperPanel>
+    </p-stepper>
 </div>
 
 

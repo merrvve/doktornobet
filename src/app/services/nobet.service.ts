@@ -1,18 +1,7 @@
 import { Injectable } from '@angular/core';
-interface Day {
-  dayNo: number;
-  isHoliday: boolean;
-  workingPersonIds: number[];
-  possiblePersonIds: number[];
-}
+import { Day } from '../models/day.interface';
+import { Person } from '../models/person.interface';
 
-interface Person {
-  personId: number;
-  shiftDays: number[];
-  holidayShiftDays: number[];
-  notPossible: number[];
-  desiredDays: number[];
-}
 
 @Injectable({
   providedIn: 'root'
@@ -30,12 +19,12 @@ export class NobetService {
 
   constructor() {
     this.persons = [
-      {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[]},
-      {personId:2,shiftDays:[],notPossible:[1],desiredDays:[],holidayShiftDays:[]},
-      {personId:3,shiftDays:[],notPossible:[2,7,8,10],desiredDays:[],holidayShiftDays:[]},
-      {personId:4,shiftDays:[],notPossible:[2,3,4,20],desiredDays:[],holidayShiftDays:[]},
-      {personId:5,shiftDays:[],notPossible:[7],desiredDays:[],holidayShiftDays:[]},
-      {personId:6,shiftDays:[],notPossible:[10],desiredDays:[],holidayShiftDays:[]}
+      {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
+      {personId:2,shiftDays:[],notPossible:[1],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
+      {personId:3,shiftDays:[],notPossible:[2,7,8,10],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
+      {personId:4,shiftDays:[],notPossible:[2,3,4,20],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
+      {personId:5,shiftDays:[],notPossible:[7],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
+      {personId:6,shiftDays:[],notPossible:[10],desiredDays:[],holidayShiftDays:[],personType:'Diğer'}
     ];
     const holidays= [6,7,13,14,20,21,27,28]
     this.holidays=holidays;

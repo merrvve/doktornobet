@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="flex justify-content-end mt-3">
-                    <p-button label="İleri" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit()" />
+                    <p-button label="İleri" icon="pi pi-arrow-right" iconPos="right" (onClick)="nextCallback.emit(); setPersons();" />
                 </div>
         </ng-template>
         </p-stepperPanel>
@@ -53,9 +53,12 @@
             <ng-template pTemplate="content" let-prevCallback="prevCallback" let-nextCallback="nextCallback" let-index="index">
                 <div class="flex flex-column">
                     <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-                        <div class="card flex justify-content-center">
-                            <p-calendar class="max-w-full" [(ngModel)]="date" [inline]="true" [showWeek]="true"></p-calendar>
-                        </div>
+                        <p-calendar [inline]="true" [monthNavigator]="true" [yearNavigator]="true" class="p-3"
+                        [(ngModel)]="date" view="month" dateFormat="mm/yy"
+                        
+                        [showButtonBar]="true" [showWeek]="false" [numberOfMonths]="1" [locale]="tr"
+             [readonlyInput]="true" [showIcon]="false" (click)="datePick()">
+</p-calendar>
                         
                     </div>
                 </div>
@@ -67,7 +70,34 @@
         <p-stepperPanel header="Sınırlama ve İsimlendirme">
             <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
                 <div class="flex flex-column h-12rem">
-                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">Content III</div>
+                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+                        <div class="flex-initial">
+                            <table class="m-5">
+                                <thead class="w-100">
+                                    <tr>
+                                        <th></th>
+                                        <th>Müsait olmadığı günler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (person of persons; track person)  {
+                                        
+                                            <tr>
+                                                <td>{{person.personType}} id: {{person.personId}}</td>
+                                                <td>
+                                                    <p-inputNumber class="m-1" [(ngModel)]="person.notPossible" inputId="integeronly" [showButtons]="true"></p-inputNumber>
+                                                
+                                                </td>
+                                            </tr>
+                                        
+                                    }
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
                 </div>
                 <div class="flex pt-4 justify-content-start">
                     <p-button label="Back" icon="pi pi-arrow-left" (onClick)="prevCallback.emit()" /></div

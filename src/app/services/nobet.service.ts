@@ -50,7 +50,6 @@ export class NobetService {
         const index = days[busyDay-1].possiblePersonIds.indexOf(person.personId);
         if(index>-1) {
           days[busyDay-1].possiblePersonIds.splice(index,1);
-          console.log(busyDay,person)
         }
       }
     }
@@ -100,8 +99,8 @@ export class NobetService {
    }
    
   nobetleriHesapla(days: Day[],persons: Person[], holidays:number[]) {
-    const shiftPerPerson = Math.ceil((days.length-holidays.length)/persons.length) 
-    const holidayShiftPerPerson = Math.ceil(holidays.length/persons.length) 
+    const shiftPerPerson = Math.floor((days.length-holidays.length)/persons.length) 
+    const holidayShiftPerPerson = Math.floor(holidays.length/persons.length) 
     this.markNotPossibleDays(persons,days);
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,2);
@@ -140,15 +139,43 @@ export class NobetService {
           }
 
         }
+
+        else {
+          //if no one is possible, assign one who is not at shift on yesterday and next day
+          let pastDay, nextDay=-1;
+          if(i>0) {
+            pastDay=days[i].workingPersonIds[0];
+          }
+          if(i<days.length+1) {
+            nextDay=days[i].workingPersonIds[0];
+          }
+          let possibleIds=[];
+          for(let j=1;j<persons.length+1; j++) {
+            if(j!==pastDay && j!==nextDay) {
+              possibleIds.push(j);
+            }
+          }
+          const secondOption = this.sample(possibleIds);
+          days[i].workingPersonIds.push(secondOption);
+          const selectedPerson = persons.find(x=>x.personId==secondOption)
+          if(selectedPerson) {
+            if(days[i].isHoliday) {
+              selectedPerson.holidayShiftDays.push(i+1);
+              
+            }
+            else {
+              selectedPerson.shiftDays.push(i+1);
+              
+            }
+          }
+        }
       }
     }
-    console.log(days)
     return days;
   }
 
    createShifts(days: Day[],persons: Person[], holidays: number[]){
 
-    console.log(days)
     
     const shiftPerPerson = Math.ceil((days.length-holidays.length)/persons.length) *2
     const holidayShiftPerPerson = Math.ceil(holidays.length/persons.length) *2

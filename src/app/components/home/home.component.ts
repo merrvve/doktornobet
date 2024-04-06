@@ -77,7 +77,6 @@ export class HomeComponent {
       }
       
     }
-    console.log(this.persons)
   }
 
   hesapla() {
@@ -102,7 +101,6 @@ export class HomeComponent {
         possiblePersonIds: [...this.possiblePersonIds]
       });
     }
-    console.log(dayslocal,this.possiblePersonIds)
     this.days = this.shiftService.nobetleriHesapla(dayslocal,this.persons,holidays);
     //console.log(daysresult);
   }

@@ -9,7 +9,9 @@ import { CalendarModule } from 'primeng/calendar';
 import { Day } from '../../models/day.interface';
 import { DoktorType } from '../../models/doktortype.interface';
 import { Person } from '../../models/person.interface';
-
+import { ChipsModule } from 'primeng/chips';
+import { InputTextModule } from 'primeng/inputtext';
+import { NgClass } from '@angular/common';
 
 
 
@@ -17,7 +19,8 @@ import { Person } from '../../models/person.interface';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ButtonModule, ToggleButtonModule, FormsModule, InputNumberModule, StepperModule, CalendarModule],
+  imports: [ButtonModule, ToggleButtonModule, FormsModule, InputNumberModule, StepperModule, 
+    CalendarModule, ChipsModule, InputTextModule, NgClass],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -28,6 +31,8 @@ export class HomeComponent {
   persons: Person[] = [];
   days : Day[] =[];
   checked: boolean = false;
+  possiblePersonIds : number[] = [];
+  selectedPerson! : Person;
   doctorTypes : DoktorType[] =[
     {name:'Şef', checked: false, numberForOneDay:1, total: 5},
     {name:'Uzman Doktor', checked: false, numberForOneDay:1, total: 5},
@@ -43,15 +48,14 @@ export class HomeComponent {
   
   constructor(private shiftService: NobetService) {}
 
-  createShift() {
-    this.days= this.shiftService.createShifts();
-  }
+  
 
   datePick() {
     console.log(this.date)
   }
 
   setPersons() {
+    this.persons=[];
     let i=1;
     for (const doctor of this.doctorTypes) {
       if(doctor.checked) {
@@ -63,8 +67,10 @@ export class HomeComponent {
             holidayShiftDays: [],
             notPossible: [],
             desiredDays: [],
-            personType: doctor.name
+            personType: doctor.name,
+            name: doctor.name + (j+1)
           })
+          this.possiblePersonIds.push(i);
           i+=1;
         }
         
@@ -72,5 +78,39 @@ export class HomeComponent {
       
     }
     console.log(this.persons)
+  }
+
+  hesapla() {
+    this.days= [];
+    for(const person of this.persons) {
+      person.shiftDays=[];
+      person.holidayShiftDays=[];
+    }
+    const holidays= [6,7,13,14,20,21,27,28]
+    let isHoliday=false;
+    let dayslocal: Day[]=[];
+
+    for (let i=1; i<31; i++) {
+      isHoliday=false;
+      if(holidays.includes(i)) {
+        isHoliday=true;
+      }
+      dayslocal.push({
+        dayNo: i,
+        isHoliday: isHoliday,
+        workingPersonIds: [],
+        possiblePersonIds: [...this.possiblePersonIds]
+      });
+    }
+    console.log(dayslocal,this.possiblePersonIds)
+    this.days = this.shiftService.nobetleriHesapla(dayslocal,this.persons,holidays);
+    //console.log(daysresult);
+  }
+
+  showPerson(personId:number) {
+    let person = this.persons.find(x=>x.personId===personId)
+    if(person) {
+      this.selectedPerson=person;
+    }
   }
 }

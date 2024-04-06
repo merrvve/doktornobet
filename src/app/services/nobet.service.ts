@@ -19,32 +19,32 @@ export class NobetService {
 
   constructor() {
     this.persons = [
-      {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
-      {personId:2,shiftDays:[],notPossible:[1],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
-      {personId:3,shiftDays:[],notPossible:[2,7,8,10],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
-      {personId:4,shiftDays:[],notPossible:[2,3,4,20],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
-      {personId:5,shiftDays:[],notPossible:[7],desiredDays:[],holidayShiftDays:[],personType:'Diğer'},
-      {personId:6,shiftDays:[],notPossible:[10],desiredDays:[],holidayShiftDays:[],personType:'Diğer'}
+      {personId:1,shiftDays:[],notPossible:[4,5,9],desiredDays:[],holidayShiftDays:[],personType:'Diğer', name:'person 1'},
+      {personId:2,shiftDays:[],notPossible:[1],desiredDays:[],holidayShiftDays:[],personType:'Diğer', name:'person 2'},
+      {personId:3,shiftDays:[],notPossible:[2,7,8,10],desiredDays:[],holidayShiftDays:[],personType:'Diğer', name:'person 3'},
+      {personId:4,shiftDays:[],notPossible:[2,3,4,20],desiredDays:[],holidayShiftDays:[],personType:'Diğer', name:'person 4'},
+      {personId:5,shiftDays:[],notPossible:[7],desiredDays:[],holidayShiftDays:[],personType:'Diğer', name:'person 5'},
+      {personId:6,shiftDays:[],notPossible:[10],desiredDays:[],holidayShiftDays:[],personType:'Diğer', name:'person 6'}
     ];
-    const holidays= [6,7,13,14,20,21,27,28]
-    this.holidays=holidays;
-    let isHoliday=false;
-    for (let i=1; i<31; i++) {
-      isHoliday=false;
-      if(holidays.includes(i)) {
-        isHoliday=true;
-      }
-      this.days.push({
-        dayNo: i,
-        isHoliday: isHoliday,
-        workingPersonIds: [],
-        possiblePersonIds: [1,2,3,4,5,6]
-      })
-    }
+    // const holidays= [6,7,13,14,20,21,27,28]
+    // this.holidays=holidays;
+    // let isHoliday=false;
+    // for (let i=1; i<31; i++) {
+    //   isHoliday=false;
+    //   if(holidays.includes(i)) {
+    //     isHoliday=true;
+    //   }
+    //   this.days.push({
+    //     dayNo: i,
+    //     isHoliday: isHoliday,
+    //     workingPersonIds: [],
+    //     possiblePersonIds: [1,2,3,4,5,6]
+    //   })
+    // }
     
    }
 
-   markNotPossibleDays(persons: Person[]=this.persons, days: Day[]=this.days) {
+   markNotPossibleDays(persons: Person[], days: Day[]) {
     for(const person of persons) {
       for (const busyDay of person.notPossible) {
         const index = days[busyDay-1].possiblePersonIds.indexOf(person.personId);
@@ -65,7 +65,7 @@ export class NobetService {
       else if (day.possiblePersonIds.length==possibleNumber && (day.workingPersonIds.length==0 || day.workingPersonIds.length==1)) {
         let selectedPersonId = this.sample(day.possiblePersonIds);
         day.workingPersonIds.push(selectedPersonId) 
-        const selectedPerson = this.persons.find(x=>x.personId==selectedPersonId);
+        const selectedPerson = persons.find(x=>x.personId==selectedPersonId);
         if(selectedPerson) {
           this.assignPersonToDay(selectedPerson,days,day,shiftPerPerson,holidayShiftPerPerson);
         }
@@ -99,9 +99,57 @@ export class NobetService {
 
    }
    
+  nobetleriHesapla(days: Day[],persons: Person[], holidays:number[]) {
+    const shiftPerPerson = Math.ceil((days.length-holidays.length)/persons.length) 
+    const holidayShiftPerPerson = Math.ceil(holidays.length/persons.length) 
+    this.markNotPossibleDays(persons,days);
+    this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
+    this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,2);
+    this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
+    console.log(shiftPerPerson,holidayShiftPerPerson,days.length,persons.length, (days.length-holidays.length)/persons.length);
+    for (let i=0; i<days.length; i++){
+      if (days[i].workingPersonIds.length==0) {
+        if(days[i].isHoliday) {
+          days[i]=this.deleteFinished(days[i],this.finishedPersonsForHolidays);
+        }
+        else {
+          days[i]=this.deleteFinished(days[i],this.finishedPersons);      
+        }
 
+        const selectedId= this.sample(days[i].possiblePersonIds);
+        if(selectedId>-1) {
+          days[i].workingPersonIds.push(selectedId);
+          const selectedPerson = persons.find(x=>x.personId==selectedId)
+          if(selectedPerson) {
+            if(days[i].isHoliday) {
+              selectedPerson.holidayShiftDays.push(i+1);
+              if(selectedPerson.holidayShiftDays.length>=holidayShiftPerPerson) {
+                this.finishedPersonsForHolidays.push(selectedId);
+              }
+            }
+            else {
+              selectedPerson.shiftDays.push(i+1);
+              if(selectedPerson.shiftDays.length>=shiftPerPerson) {
+                this.finishedPersons.push(selectedId);
+              }
+            }  
+          }
+          if(i+1<days.length) {
+            const index= days[i+1].possiblePersonIds.indexOf(selectedId);
+            days[i+1].possiblePersonIds.splice(index,1)
+          }
 
-   createShifts(days: Day[]=this.days,persons: Person[]=this.persons, holidays: number[]=this.holidays){
+        }
+      }
+    }
+    console.log(days)
+    return days;
+  }
+
+   createShifts(days: Day[],persons: Person[], holidays: number[]){
+
+    console.log(days)
+    
     const shiftPerPerson = Math.ceil((days.length-holidays.length)/persons.length) *2
     const holidayShiftPerPerson = Math.ceil(holidays.length/persons.length) *2
 
@@ -111,7 +159,7 @@ export class NobetService {
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,1);
 
     for (let i=0; i<days.length; i++){
-      if (days[i].workingPersonIds.length==0 ||days[i].workingPersonIds.length==1) {
+      if (days[i].workingPersonIds.length==0) {
         if(days[i].isHoliday) {
           days[i]=this.deleteFinished(days[i],this.finishedPersonsForHolidays);
         }
@@ -121,7 +169,7 @@ export class NobetService {
         const selectedId= this.sample(days[i].possiblePersonIds);
         if(selectedId>-1) {
           days[i].workingPersonIds.push(selectedId);
-          const selectedPerson = this.persons.find(x=>x.personId==selectedId)
+          const selectedPerson = persons.find(x=>x.personId==selectedId)
           if(selectedPerson) {
             if(days[i].isHoliday) {
               selectedPerson.holidayShiftDays.push(i+1);
@@ -150,49 +198,46 @@ export class NobetService {
       }
     }
 
-    for (let i=0; i<days.length; i++){
-      if (days[i].workingPersonIds.length==0 ||days[i].workingPersonIds.length==1) {
-        if(days[i].isHoliday) {
-          days[i]=this.deleteFinished(days[i],this.finishedPersonsForHolidays);
-        }
-        else {
-          days[i]=this.deleteFinished(days[i],this.finishedPersons);      
-        }
-        const selectedId= this.sample(days[i].possiblePersonIds);
-        if(selectedId>-1) {
-          days[i].workingPersonIds.push(selectedId);
-          const selectedPerson = this.persons.find(x=>x.personId==selectedId)
-          if(selectedPerson) {
-            if(days[i].isHoliday) {
-              selectedPerson.holidayShiftDays.push(i+1);
-              if(selectedPerson.holidayShiftDays.length>=holidayShiftPerPerson) {
-                this.finishedPersonsForHolidays.push(selectedId);
-              }
-            }
-            else {
-              selectedPerson.shiftDays.push(i+1);
-              if(selectedPerson.shiftDays.length>=shiftPerPerson) {
-                this.finishedPersons.push(selectedId);
-              }
-            }
-            days[i].possiblePersonIds.splice(days[i].possiblePersonIds.indexOf(selectedId),1)
-          }
-          if(i+1<days.length) {
-            days[i+1].possiblePersonIds.splice(days[i+1].possiblePersonIds.indexOf(selectedId),1)
-          }
-        }
-        else {
-          console.log('No possible person for day: ',i+1);
-          return [];
-        }
+    // for (let i=0; i<days.length; i++){
+    //   if (days[i].workingPersonIds.length==0 ||days[i].workingPersonIds.length==1) {
+    //     if(days[i].isHoliday) {
+    //       days[i]=this.deleteFinished(days[i],this.finishedPersonsForHolidays);
+    //     }
+    //     else {
+    //       days[i]=this.deleteFinished(days[i],this.finishedPersons);      
+    //     }
+    //     const selectedId= this.sample(days[i].possiblePersonIds);
+    //     if(selectedId>-1) {
+    //       days[i].workingPersonIds.push(selectedId);
+    //       const selectedPerson = this.persons.find(x=>x.personId==selectedId)
+    //       if(selectedPerson) {
+    //         if(days[i].isHoliday) {
+    //           selectedPerson.holidayShiftDays.push(i+1);
+    //           if(selectedPerson.holidayShiftDays.length>=holidayShiftPerPerson) {
+    //             this.finishedPersonsForHolidays.push(selectedId);
+    //           }
+    //         }
+    //         else {
+    //           selectedPerson.shiftDays.push(i+1);
+    //           if(selectedPerson.shiftDays.length>=shiftPerPerson) {
+    //             this.finishedPersons.push(selectedId);
+    //           }
+    //         }
+    //         days[i].possiblePersonIds.splice(days[i].possiblePersonIds.indexOf(selectedId),1)
+    //       }
+    //       if(i+1<days.length) {
+    //         days[i+1].possiblePersonIds.splice(days[i+1].possiblePersonIds.indexOf(selectedId),1)
+    //       }
+    //     }
+    //     else {
+    //       console.log('No possible person for day: ',i+1);
+    //       return [];
+    //     }
         
   
-      }
-    }
+    //   }
+    // }
   
-    console.log(days);
-    
-    console.log(persons)
     return days;
    }
 

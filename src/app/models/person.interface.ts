@@ -5,4 +5,5 @@ export interface Person {
     notPossible: number[];
     desiredDays: number[];
     personType: string;
+    name: string;
   }

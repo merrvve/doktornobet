@@ -3,4 +3,5 @@ export interface DoktorType {
     checked: boolean;
     numberForOneDay: number;
     total: number;
+    id: number;
   }

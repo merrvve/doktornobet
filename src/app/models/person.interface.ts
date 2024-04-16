@@ -6,4 +6,5 @@ export interface Person {
     desiredDays: number[];
     personType: string;
     name: string;
+    typeid: number;
   }

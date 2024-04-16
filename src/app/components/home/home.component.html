@@ -84,8 +84,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @for (person of persons; track person)  {
-                                        
+                                    @for (persons of personsList; track persons)  {
+                                        @for(person of persons; track person) {
                                             <tr>
                                                 <td>
                                                     <input type="text" pInputText [(ngModel)]="person.name" class="m-2"/>
@@ -94,6 +94,7 @@
                                                     <p-chips [(ngModel)]="person.notPossible" separator="," placeholder="Virgülle ayırınız: 1, 12, .." class="m-2"></p-chips>
                                                 </td>
                                             </tr>
+                                        }
                                         
                                     }
 
@@ -114,8 +115,10 @@
         <p-stepperPanel header="Sonuç">
             <ng-template pTemplate="content" let-prevCallback="prevCallback" let-index="index">
                 <div class="flex flex-column">
-                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center font-medium">
+                    <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center font-medium p-3">
                         <div class="flex-1">
+                            @for(days of dayslist; track days) {
+                                    
                             <table>
                                 <thead>
                                     <tr>
@@ -124,22 +127,23 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
-                                    @for(day of days; track day.dayNo) {
-                                        <tr>
-                                            <td [ngClass]="{'font-bold' : day.isHoliday}">{{day.dayNo}}</td>
-                                            @if(day.workingPersonIds.length>0) {
-                                                <td (click)="showPerson(day.workingPersonIds[0]-1)" class="cursor-pointer">
-                                                    {{persons[day.workingPersonIds[0]-1].name}}</td>
-                                            }
-                                            @else {
-                                                <td></td>
-                                            }
-                                           
-                                        </tr>
-                                    }
+                                       @for(day of days; track day.dayNo) {
+                                            <tr>
+                                                <td [ngClass]="{'font-bold' : day.isHoliday}">{{day.dayNo}}</td>
+                                                @if(day.workingPersonIds.length>0) {
+                                                    <td (click)="showPerson(day.workingPersonIds[0]-1)" class="cursor-pointer">
+                                                        {{day.workingPersonIds[0]}}</td>
+                                                }
+                                                @else {
+                                                    <td></td>
+                                                }
+                                               
+                                            </tr>
+                                        }
+                                                                       
                                 </tbody>
                             </table>
+                        }
                         </div>
                         <div class="flex-1">
                             @for (person of persons; track person.personId) {

@@ -79,8 +79,8 @@ export class HomeComponent {
             name: doctor.name + (j+1),
             typeid: doctor.id
           })
-          this.possiblePersonIds.push(i);
-          i+=1;
+          this.possiblePersonIds.push(j);
+        
         }
       this.personsList.push(persons)
       }
@@ -102,9 +102,9 @@ export class HomeComponent {
     let isHoliday=false;
     this.dayslist=[[]];
     let dayslocal: Day[] = [];
-    for(let i=0; i<this.personsList.length;i++) {
+    for(let i=1; i<this.personsList.length;i++) {
       dayslocal = [];
-      let possibleIds =  this.createNumberList(0,this.personsList.length);
+      let possibleIds = this.personsList[i].length<0 ? [] : this.createNumberList(0,this.personsList[i].length-1);
       console.log(possibleIds)
       for (let i=1; i<31; i++) {
         isHoliday=false;

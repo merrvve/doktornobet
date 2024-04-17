@@ -1,3 +1,12 @@
+<div class="bg-primary text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap mb-5">
+    <div class="font-bold mr-8"> Doktor Nöbet Listesi</div>
+    
+    <!-- <a class="flex align-items-center ml-2 mr-8">
+        <a class="text-white" href="https://github.com/merrvve" target="_blank"><span class="underline font-bold">Hakkımızda</span></a>
+    </a>
+     -->
+</div>
+
 <div class="card flex-1 justify-content-center">
     <p-stepper>
         <p-stepperPanel header="Nöbetçi Sayıları">
@@ -117,41 +126,55 @@
                 <div class="flex flex-column">
                     <div class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center font-medium p-3">
                         <div class="flex-1">
-                            @for(days of dayslist; track days) {
-                                    
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Gün</th>
-                                        <th>Nöbetçi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                       @for(day of days; track day.dayNo) {
-                                            <tr>
-                                                <td [ngClass]="{'font-bold' : day.isHoliday}">{{day.dayNo}}</td>
-                                                @if(day.workingPersonIds.length>0) {
-                                                    <td (click)="showPerson(day.workingPersonIds[0]-1)" class="cursor-pointer">
-                                                        {{day.workingPersonIds[0]}}</td>
-                                                }
-                                                @else {
-                                                    <td></td>
-                                                }
-                                               
-                                            </tr>
-                                        }
-                                                                       
-                                </tbody>
-                            </table>
+                            @for(days of dayslist; track days; let idx = $index) {
+                                    @if(idx!=0) {
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Gün</th>
+                                                    <th>Nöbetçi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                   @for(day of days; track day.dayNo) {
+                                                        <tr>
+                                                            <td [ngClass]="{'font-bold' : day.isHoliday}">{{day.dayNo}}</td>
+                                                            @if(day.workingPersonIds.length>0) {
+
+                                                                <td (click)="showPerson(day.workingPersonIds[0]-1)" class="cursor-pointer">
+                                                                    {{personsList[idx][day.workingPersonIds[0]].name}}</td>
+                                                            }
+                                                            @else {
+                                                                <td></td>
+                                                            }
+                                                           
+                                                        </tr>
+                                                    }
+                                                                                   
+                                            </tbody>
+                                        </table>
+            
+                                    }
                         }
                         </div>
                         <div class="flex-1">
-                            @for (person of persons; track person.personId) {
-                                <div>Adı: {{person.name}} Nöbet sayısı {{person.shiftDays.length}} haftaiçi, {{person.holidayShiftDays.length}} haftasonu</div>
-                                <div>Haftaiçi Nöbet günleri: {{person.shiftDays}}</div>
-                                <div>Haftasonu Nöbet günleri: {{person.holidayShiftDays}}</div>
-                                <div class="mb-3">Müsait olmadığı günler: {{person.notPossible}}</div>
+                            @for(persons of personsList; track persons) {
+                                <div class="mb-5">
+                                    @for (person of persons; track person.personId) {
+                                        <div>
+                                            <span class="font-bold">Adı:</span> {{person.name}}
+                                        </div><div>
+                                            <span class="font-bold"> Nöbet sayısı </span>{{person.shiftDays.length}} 
+                                            <span class="font-bold"> haftaiçi,</span> {{person.holidayShiftDays.length}} 
+                                            <span class="font-bold"> haftasonu</span> 
+                                        </div>
+                                        <div><span class="font-bold"> Haftaiçi Nöbet günleri:</span>  {{person.shiftDays}}</div>
+                                        <div><span class="font-bold"> Haftasonu Nöbet günleri:</span>  {{person.holidayShiftDays}}</div>
+                                        <div class="mb-3"><span class="font-bold"> Müsait olmadığı günler:</span>  {{person.notPossible}}</div>
+                                    }
+                                    </div>
                             }
+                            
                         </div>
                         <div class="flex-1">
                             @if(selectedPerson) {

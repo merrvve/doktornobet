@@ -98,7 +98,8 @@ export class NobetService {
    }
    
   nobetleriHesapla(days: Day[],persons: Person[], holidays:number[]) {
-    const shiftPerPerson = Math.floor((days.length-holidays.length)/persons.length) 
+    console.log(days)
+    const shiftPerPerson = Math.trunc((days.length-holidays.length)/persons.length)
     const holidayShiftPerPerson = Math.floor(holidays.length/persons.length) 
     let finishedPersons: number[]=[];
     let finishedPersonsForHolidays: number[]=[];
@@ -108,6 +109,7 @@ export class NobetService {
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,finishedPersonsForHolidays,finishedPersons,2);
     this.assignLowPossibilityDays(days,persons,shiftPerPerson,holidayShiftPerPerson,finishedPersonsForHolidays,finishedPersons,1);
     console.log(shiftPerPerson,holidayShiftPerPerson,days.length,persons.length, (days.length-holidays.length)/persons.length);
+   
     for (let i=0; i<days.length; i++){
       if (days[i].workingPersonIds.length==0) {
         if(days[i].isHoliday) {
@@ -126,12 +128,14 @@ export class NobetService {
               selectedPerson.holidayShiftDays.push(i+1);
               if(selectedPerson.holidayShiftDays.length>=holidayShiftPerPerson) {
                 finishedPersonsForHolidays.push(selectedId);
+                console.log("finished holiday",selectedId);
               }
             }
             else {
               selectedPerson.shiftDays.push(i+1);
               if(selectedPerson.shiftDays.length>=shiftPerPerson) {
                 finishedPersons.push(selectedId);
+                console.log("finished day",selectedId)
               }
             }  
           }
@@ -143,6 +147,7 @@ export class NobetService {
         }
 
         else {
+          console.log(days[i], "random choice")
           //if no one is possible, assign one who is not at shift on yesterday and next day
           let pastDay, nextDay=-1;
           if(i>0) {

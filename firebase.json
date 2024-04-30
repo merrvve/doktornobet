@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "dist/nobet/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 export interface Day {
-    dayNo: number;
-    isHoliday: boolean;
-    workingPersonIds: number[];
-    possiblePersonIds: number[];
-  }
+  dayNo: number;
+  isHoliday: boolean;
+  workingPersonIds: number[];
+  possiblePersonIds: number[];
+}

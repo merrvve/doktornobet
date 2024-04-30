@@ -1,4 +1,32 @@
-# Nobet
+# Application for preparing duty lists for doctors
+
+## Features:
+- 24 hour shifts
+- Preparing a list for 1 month
+- Assigning more than one doctor per day
+- Assigning more than one type of doctor per day
+- Considering the days when the doctors are not available
+- Random selection of doctors on days when no one is available
+
+Features to be Added:
+- Visual editing of the duty list and exporting it to Excel
+- Bug fix for multiple types of doctors list 
+
+# Doktorlar için nöbet listesi hazırlama uygulaması. (Türkçe)
+
+## Özellikler:
+- 24 saatlik nöbetler
+- 1 aylık süre için liste hazırlama
+- 1 güne birden fazla nöbetçi atama
+- 1 güne birden fazla çeşit nöbetçi atama
+- Nöbetçilerin müsait olmadığı günleri göz önünde bulundurma
+- Kimsenin müsait olmadığı günlerde rastgele nöbetçi seçilmesi
+
+## Eklenecek Özellikler:
+- Nöbet listesinin görsel olarak düzenlenmesi ve excele aktarılabilmesi
+- Birden fazla çeşit nöbetçi için bug fix
+
+# General
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.0.
 

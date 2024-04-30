@@ -12,23 +12,11 @@ Features to be Added:
 - Visual editing of the duty list and exporting it to Excel
 - Bug fix for multiple types of doctors list 
 
-# Doktorlar için nöbet listesi hazırlama uygulaması. (Türkçe)
-
-## Özellikler:
-- 24 saatlik nöbetler
-- 1 aylık süre için liste hazırlama
-- 1 güne birden fazla nöbetçi atama
-- 1 güne birden fazla çeşit nöbetçi atama
-- Nöbetçilerin müsait olmadığı günleri göz önünde bulundurma
-- Kimsenin müsait olmadığı günlerde rastgele nöbetçi seçilmesi
-
-## Eklenecek Özellikler:
-- Nöbet listesinin görsel olarak düzenlenmesi ve excele aktarılabilmesi
-- Birden fazla çeşit nöbetçi için bug fix
-
-# General
+## Tech Stack
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.0.
+
+PrimeNG and PrimeFlex were used for UI development
 
 ## Development server
 
@@ -53,3 +41,18 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+
+# Doktorlar için nöbet listesi hazırlama uygulaması. (Türkçe)
+
+## Özellikler:
+- 24 saatlik nöbetler
+- 1 aylık süre için liste hazırlama
+- 1 güne birden fazla nöbetçi atama
+- 1 güne birden fazla çeşit nöbetçi atama
+- Nöbetçilerin müsait olmadığı günleri göz önünde bulundurma
+- Kimsenin müsait olmadığı günlerde rastgele nöbetçi seçilmesi
+
+## Eklenecek Özellikler:
+- Nöbet listesinin görsel olarak düzenlenmesi ve excele aktarılabilmesi
+- Birden fazla çeşit nöbetçi için bug fix

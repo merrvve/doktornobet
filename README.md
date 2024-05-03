@@ -1,12 +1,13 @@
 # Application for preparing duty lists for doctors
 
 ## Features:
-- 24 hour shifts
-- Preparing a list for 1 month
-- Assigning more than one doctor per day
-- Assigning more than one type of doctor per day
-- Considering the days when the doctors are not available
-- Random selection of doctors on days when no one is available
+- Prepares a list for 24-hour shifts for a month
+- Can assign more than one doctor per day
+- Can assign more than one type of doctor per day
+- Considers weekends and other holidays and calculates them separately
+- Considers the days when the doctors are not available
+- Selects a doctor randomly if no one is available for a particular day
+
 
 Features to be Added:
 - Visual editing of the duty list and exporting it to Excel
